@@ -56,3 +56,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		teleportToPart()
 	end
 end)
+
+
+print("Done")
