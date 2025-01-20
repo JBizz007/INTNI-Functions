@@ -1,9 +1,17 @@
 --Save/Load Pos, Num7 to save - Num9 to load.
 
--- Store the part, the player, and a flag to check if the script has been initialized
+-- Use a unique identifier in the shared environment to track initialization
+local scriptId = "SaveLoadPosScript_v1" -- Change this if you update the script later
+
+-- Check if the script has already been initialized in the shared environment
+if shared[scriptId] then
+	print("Script already initialized!")
+	return -- Prevent re-initialization
+end
+
+-- Store the part and the player
 local part = nil
 local player = game.Players.LocalPlayer
-local isInitialized = false
 
 -- Function to create or update the part
 local function createOrUpdatePart()
@@ -49,11 +57,6 @@ local UserInputService = game:GetService("UserInputService")
 
 -- Function to initialize the script
 local function initialize()
-	if isInitialized then
-		print("Script already initialized!")
-		return -- Prevent re-initialization
-	end
-
 	-- Connect input events to functions
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if gameProcessedEvent then return end -- Ignore input if the game is already processing it (e.g., typing in chat)
@@ -65,7 +68,8 @@ local function initialize()
 		end
 	end)
 
-	isInitialized = true
+	-- Mark the script as initialized in the shared environment
+	shared[scriptId] = true
 	print("Script initialized successfully!")
 end
 
