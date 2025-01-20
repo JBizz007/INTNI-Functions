@@ -1,8 +1,9 @@
 --Save/Load Pos, Num7 to save - Num9 to load.
 
--- Store the part and the player
+-- Store the part, the player, and a flag to check if the script has been initialized
 local part = nil
 local player = game.Players.LocalPlayer
+local isInitialized = false
 
 -- Function to create or update the part
 local function createOrUpdatePart()
@@ -46,16 +47,27 @@ end
 -- Get the UserInputService
 local UserInputService = game:GetService("UserInputService")
 
--- Connect input events to functions
-UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-	if gameProcessedEvent then return end -- Ignore input if the game is already processing it (e.g., typing in chat)
-
-	if input.KeyCode == Enum.KeyCode.KeypadSeven then
-		createOrUpdatePart()
-	elseif input.KeyCode == Enum.KeyCode.KeypadNine then
-		teleportToPart()
+-- Function to initialize the script
+local function initialize()
+	if isInitialized then
+		print("Script already initialized!")
+		return -- Prevent re-initialization
 	end
-end)
 
+	-- Connect input events to functions
+	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if gameProcessedEvent then return end -- Ignore input if the game is already processing it (e.g., typing in chat)
 
-print("Done")
+		if input.KeyCode == Enum.KeyCode.KeypadSeven then
+			createOrUpdatePart()
+		elseif input.KeyCode == Enum.KeyCode.KeypadNine then
+			teleportToPart()
+		end
+	end)
+
+	isInitialized = true
+	print("Script initialized successfully!")
+end
+
+-- Call the initialize function to start the script
+initialize()
