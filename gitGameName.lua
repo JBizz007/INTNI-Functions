@@ -15,9 +15,3 @@ local function getGameName(placeId)
 end
 
 local gameName = getGameName(placeId)
-
-if gameName then
-    print("Game Name:", gameName)
-else
-    print("Failed to get game name.")
-end
