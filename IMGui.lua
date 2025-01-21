@@ -355,7 +355,7 @@ function ImGui:ContainerClass(Frame: Frame, Class, Window)
 		end
 	
 		--// Merge the class with the properties of the instance
-		local Merged = ImGui:MergeMetatables(Class, Instance)
+		local Merged = ImGui:MergeMetatables(WindowConfig, Window)
 	
 		function Merged:GetPosition()
 			return Instance.Position
