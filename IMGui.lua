@@ -291,17 +291,23 @@ end
 function ImGui:MergeMetatables(Class, Instance: GuiObject)
 	local Metadata = {}
 	Metadata.__index = function(self, Key)
-		local suc, Value = pcall(function()
-			local Value = Instance[Key]
-			if typeof(Value) == "function" then
-				return function(...)
-					return Value(Instance, ...)
-				end
-			end
-			return Value
-		end)
-		return suc and Value or Class[Key]
-	end
+        -- Check if the key exists in Class first
+        local Value = Class[Key]
+        if Value ~= nil then
+            return Value
+        end
+    
+        -- If not in Class, check if it's a function in Instance
+        local InstanceValue = Instance[Key]
+        if typeof(InstanceValue) == "function" then
+            return function(...)
+                return InstanceValue(Instance, ...)
+            end
+        end
+    
+        -- Otherwise, return the Instance value directly
+        return InstanceValue
+    end
 
 	Metadata.__newindex = function(self, Key, Value)
 		local Key2 = Class[Key]
