@@ -291,34 +291,23 @@ end
 function ImGui:MergeMetatables(Class, Instance: GuiObject)
 	local Metadata = {}
 	Metadata.__index = function(self, Key)
-        -- Check if the key exists in Class first
-        local Value = Class[Key]
-        if Value ~= nil then
-            return Value
-        end
-    
-        -- If not in Class, check if it's a function in Instance
-        local InstanceValue = Instance[Key]
-        if typeof(InstanceValue) == "function" then
-            return function(...)
-                return InstanceValue(Instance, ...)
-            end
-        end
-    
-        -- Otherwise, return the Instance value directly
-        return InstanceValue
-    end
+		local Value = Class[Key]
+		if Value ~= nil then
+			return Value
+		end
+
+		return Instance[Key] -- Simplified, directly access Instance
+	end
 
 	Metadata.__newindex = function(self, Key, Value)
-		local Key2 = Class[Key]
-		if Key2 ~= nil or typeof(Value) == "function" then
+		if Class[Key] ~= nil or typeof(Value) == "function" then
 			Class[Key] = Value
 		else
 			Instance[Key] = Value
 		end
 	end
 
-	return setmetatable({}, Metadata)
+	return setmetatable(Instance, Metadata) -- Set metatable on Instance
 end
 
 function ImGui:Concat(Table, Separator: " ") 
@@ -1751,7 +1740,24 @@ function ImGui:CreateWindow(WindowConfig)
 		ImGui:ApplyWindowSelectEffect(Window, TitleBar)
 	end
 
-	return ImGui:MergeMetatables(WindowConfig, Window)
+	function Window:GetPosition()
+		return self.Position
+	end
+
+	function Window:GetSize()
+		return self.Size
+	end
+
+	function Window:GetAbsolutePosition()
+		return self.AbsolutePosition
+	end
+
+	function Window:GetAbsoluteSize()
+		return self.AbsoluteSize
+	end
+
+	-- Merge WindowConfig into Window, not the other way around
+	return ImGui:MergeMetatables(Window, WindowConfig)
 end
 
 function ImGui:CreateModal(Config)
