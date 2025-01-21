@@ -1608,6 +1608,22 @@ function ImGui:CreateWindow(WindowConfig)
 		return self
 	end
 
+    function WindowConfig:GetPosition()
+		return Window.Position
+	end
+
+	function WindowConfig:GetSize()
+		return Window.Size
+	end
+
+	function WindowConfig:GetAbsolutePosition()
+		return Window.AbsolutePosition
+	end
+
+	function WindowConfig:GetAbsoluteSize()
+		return Window.AbsoluteSize
+	end
+
 	Toggle.ToggleButton.Activated:Connect(function()
 		local Open = not WindowConfig.Open
 		WindowConfig.Open = Open
