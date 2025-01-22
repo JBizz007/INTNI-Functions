@@ -1,5 +1,6 @@
 if Skript then
 	print("Already Running")
+    -- error("already running!", 0)
     return
 end
 
