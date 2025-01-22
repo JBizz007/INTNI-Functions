@@ -1,21 +1,12 @@
 if Skript then
 	print("Already Running")
-    -- error("Infinite Yield is already running!", 0)
+    -- error("already running!", 0)
     return
 end
 
 pcall(function() getgenv().Skript = true end)
 
 --Save/Load Pos, Num7 to save - Num9 to load.
-
--- Use a unique identifier in the shared environment to track initialization
-local scriptId = "SaveLoadPosScript_v1" -- Change this if you update the script later
-
--- Check if the script has already been initialized in the shared environment
-if shared[scriptId] then
-	print("Script already initialized!")
-	return -- Prevent re-initialization
-end
 
 -- Store the part and the player
 local part = nil
@@ -63,23 +54,13 @@ end
 -- Get the UserInputService
 local UserInputService = game:GetService("UserInputService")
 
--- Function to initialize the script
-local function initialize()
-	-- Connect input events to functions
-	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-		if gameProcessedEvent then return end -- Ignore input if the game is already processing it (e.g., typing in chat)
+-- Connect input events to functions
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+	if gameProcessedEvent then return end -- Ignore input if the game is already processing it (e.g., typing in chat)
 
-		if input.KeyCode == Enum.KeyCode.KeypadSeven then
-			createOrUpdatePart()
-		elseif input.KeyCode == Enum.KeyCode.KeypadNine then
-			teleportToPart()
-		end
-	end)
-
-	-- Mark the script as initialized in the shared environment
-	shared[scriptId] = true
-	print("Script initialized successfully!")
-end
-
--- Call the initialize function to start the script
-initialize()
+	if input.KeyCode == Enum.KeyCode.KeypadSeven then
+		createOrUpdatePart()
+	elseif input.KeyCode == Enum.KeyCode.KeypadNine then
+		teleportToPart()
+	end
+end)
