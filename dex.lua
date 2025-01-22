@@ -1,10 +1,10 @@
-if Skript then
+if DexRunning then
 	print("Already Running")
     -- error("already running!", 0)
     return
 end
 
-pcall(function() getgenv().Skript = true end)
+pcall(function() getgenv().DexRunning = true end)
 
 -- https://github.com/LorekeeperZinnia/Dex
 
