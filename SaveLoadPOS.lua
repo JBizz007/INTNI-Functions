@@ -1,3 +1,11 @@
+if Skript then
+	print("Already Running")
+    -- error("Infinite Yield is already running!", 0)
+    return
+end
+
+pcall(function() getgenv().Skript = true end)
+
 --Save/Load Pos, Num7 to save - Num9 to load.
 
 -- Use a unique identifier in the shared environment to track initialization
