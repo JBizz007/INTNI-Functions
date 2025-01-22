@@ -1,3 +1,10 @@
+if Skript then
+	print("Already Running")
+    return
+end
+
+pcall(function() getgenv().Skript = true end)
+
 -- https://github.com/LorekeeperZinnia/Dex
 
 --[[
