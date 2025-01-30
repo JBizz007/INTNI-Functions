@@ -808,27 +808,17 @@ function ImGui:ContainerClass(Frame: Frame, Class, Window)
 	end
 
 	function ContainerClass:Separator(Config)
-    Config = Config or {}
-    local Separator
+		Config = Config or {}
+		local Separator = Prefabs.SeparatorText:Clone()
+		local HeaderLabel = Separator.TextLabel
+		HeaderLabel.Text = Config.Text or ""
 
-    if Config.Type == "space" then
-        -- Create a space-based separator
-        Separator = Prefabs.SpaceSeparator:Clone() -- Assuming you have a SpaceSeparator prefab
-        Separator.TextLabel.Text = string.rep(" ", Config.SpaceCount or 10) -- Use string.rep to create spaces
-        Separator.TextLabel.Visible = true -- Ensure the label (now containing spaces) is visible
-    else
-        -- Create the original line-based separator
-        Separator = Prefabs.SeparatorText:Clone()
-        local HeaderLabel = Separator.TextLabel
-        HeaderLabel.Text = Config.Text or ""
+		if not Config.Text then
+			HeaderLabel.Visible = false
+		end
 
-        if not Config.Text then
-            HeaderLabel.Visible = false
-        end
-    end
-
-    return self:NewInstance(Separator, Config)
-end
+		return self:NewInstance(Separator, Config)
+	end
 
 	function ContainerClass:Row(Config)
 		Config = Config or {}
