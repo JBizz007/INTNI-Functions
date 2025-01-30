@@ -877,6 +877,7 @@ function ImGui:ContainerClass(Frame: Frame, Class, Window)
 		local Grab: Frame = Slider.Grab
 		local ValueText = Slider.ValueText
 		local Label = Slider.Label
+		local TextColor = Slider.Label.TextColor3
 		
 		--// Input data
 		local Dragging = false
