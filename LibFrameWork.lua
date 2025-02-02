@@ -207,40 +207,45 @@ function ImGui:CreateInstance(Class, Parent, Properties)
 end
 
 function ImGui:ApplyColors(ColorOverwrites, GuiObject, ElementType)
-	for Info, Value in next, ColorOverwrites do
-		local Key = Info
-		local Recursive = false
+    for Info, Value in next, ColorOverwrites do
+        local Key = Info
+        local Recursive
 
-		if typeof(Info) == "table" then
-			Key = Info.Name or ""
-			Recursive = Info.Recursive == true  -- Explicitly check for true
-		end
+        if typeof(Info) == "table" then
+            Key = Info.Name or ""
+            Recursive = Info.Recursive
+        end
 
-		--// Child object
-		if typeof(Value) == "table" then
-			local Element = GuiObject:FindFirstChild(Key, Recursive)
+        --// Child object
+        if typeof(Value) == "table" then
+            local Element
 
-			if not Element then
-				if ElementType == "Window" then
-					Element = GuiObject.Content:FindFirstChild(Key, Recursive)
-					if not Element then
-						continue
-					end
-				else
-					warn(Key, "was not found in", GuiObject)
-					warn("Table:", Value)
+            -- Use a boolean flag for FindFirstChild
+            if Recursive == true then
+                Element = GuiObject:FindFirstChild(Key, true) -- Search recursively
+                if not Element and ElementType == "Window" then
+                    Element = GuiObject.Content:FindFirstChild(Key, true) -- Search recursively in Content
+                end
+            else
+                Element = GuiObject:FindFirstChild(Key) -- Search non-recursively
+                if not Element and ElementType == "Window" then
+                    Element = GuiObject.Content:FindFirstChild(Key) -- Search non-recursively in Content
+                end
+            end
 
-					continue
-				end
-			end
+            if not Element then
+                warn(Key, "was not found in", GuiObject)
+                warn("Table:", Value)
+                continue
+            end
 
-			self:ApplyColors(Value, Element, ElementType) -- Pass ElementType recursively
-			continue
-		end
+            self:ApplyColors(Value, Element, ElementType)
+            continue
+        end
 
-		--// Set property
-		GuiObject[Key] = Value
-	end
+        --// Set property
+        GuiObject[Key] = Value
+    end
 end
 
 function ImGui:CheckStyles(GuiObject: GuiObject, Class, Colors)
