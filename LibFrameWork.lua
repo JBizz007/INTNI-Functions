@@ -206,46 +206,39 @@ function ImGui:CreateInstance(Class, Parent, Properties)
 	return Instance
 end
 
-function ImGui:ApplyColors(ColorOverwrites, GuiObject, ElementType)
-    for Info, Value in next, ColorOverwrites do
-        local Key = Info
-        local Recursive
+function ImGui:ApplyColors(ColorOverwrites, GuiObject: GuiObject, ElementType: string)
+	for Info, Value in next, ColorOverwrites do
+		local Key = Info
+		local Recursive = false
 
-        if typeof(Info) == "table" then
-            Key = Info.Name or ""
-            Recursive = Info.Recursive
-        end
+		if typeof(Info) == "table" then
+			Key = Info.Name or ""
+			Recursive = Info.Recursive or false
+		end
 
-        --// Child object
-        if typeof(Value) == "table" then
-            local Element
+		--// Child object
+		if typeof(Value) == "table" then
+			local Element = GuiObject:FindFirstChild(Key, Recursive)
 
-            -- Use a boolean flag for FindFirstChild
-            if Recursive == true then
-                Element = GuiObject:FindFirstChild(Key, true) -- Search recursively
-                if not Element and ElementType == "Window" then
-                    Element = GuiObject.Content:FindFirstChild(Key, true) -- Search recursively in Content
-                end
-            else
-                Element = GuiObject:FindFirstChild(Key) -- Search non-recursively
-                if not Element and ElementType == "Window" then
-                    Element = GuiObject.Content:FindFirstChild(Key) -- Search non-recursively in Content
-                end
-            end
+			if not Element then 
+				if ElementType == "Window" then
+					Element = GuiObject.Content:FindFirstChild(Key, Recursive)
+					if not Element then continue end
+				else 
+					warn(Key, "was not found in", GuiObject)
+					warn("Table:", Value)
 
-            if not Element then
-                warn(Key, "was not found in", GuiObject)
-                warn("Table:", Value)
-                continue
-            end
+					continue
+				end
+			end
 
-            self:ApplyColors(Value, Element, ElementType)
-            continue
-        end
+			ImGui:ApplyColors(Value, Element)
+			continue
+		end
 
-        --// Set property
-        GuiObject[Key] = Value
-    end
+		--// Set property
+		GuiObject[Key] = Value
+	end
 end
 
 function ImGui:CheckStyles(GuiObject: GuiObject, Class, Colors)
@@ -884,7 +877,6 @@ function ImGui:ContainerClass(Frame: Frame, Class, Window)
 		local Grab: Frame = Slider.Grab
 		local ValueText = Slider.ValueText
 		local Label = Slider.Label
-		local TextColor = Slider.Label.TextColor3
 		
 		--// Input data
 		local Dragging = false
