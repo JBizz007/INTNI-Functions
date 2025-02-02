@@ -206,25 +206,27 @@ function ImGui:CreateInstance(Class, Parent, Properties)
 	return Instance
 end
 
-function ImGui:ApplyColors(ColorOverwrites, GuiObject: GuiObject, ElementType: string)
+function ImGui:ApplyColors(ColorOverwrites, GuiObject, ElementType)
 	for Info, Value in next, ColorOverwrites do
 		local Key = Info
 		local Recursive = false
 
 		if typeof(Info) == "table" then
 			Key = Info.Name or ""
-			Recursive = Info.Recursive or false
+			Recursive = Info.Recursive == true  -- Explicitly check for true
 		end
 
 		--// Child object
 		if typeof(Value) == "table" then
 			local Element = GuiObject:FindFirstChild(Key, Recursive)
 
-			if not Element then 
+			if not Element then
 				if ElementType == "Window" then
 					Element = GuiObject.Content:FindFirstChild(Key, Recursive)
-					if not Element then continue end
-				else 
+					if not Element then
+						continue
+					end
+				else
 					warn(Key, "was not found in", GuiObject)
 					warn("Table:", Value)
 
@@ -232,7 +234,7 @@ function ImGui:ApplyColors(ColorOverwrites, GuiObject: GuiObject, ElementType: s
 				end
 			end
 
-			ImGui:ApplyColors(Value, Element)
+			self:ApplyColors(Value, Element, ElementType) -- Pass ElementType recursively
 			continue
 		end
 
